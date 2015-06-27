@@ -7,15 +7,15 @@ module Query.BattingResult
 import Database.Relational.Query
 import GHC.Int (Int32)
 
-import qualified Models.BattingResult as B
+import qualified Model.Database.TblBattingResult as B
 
-fetchListByGameId :: Int32 -> Relation () B.BattingResult
+fetchListByGameId :: Int32 -> Relation () B.TblBattingResult
 fetchListByGameId gameId = relation $ do
-  q <- query B.battingResult
+  q <- query B.tblBattingResult
   wheres $ q ! B.gameId' .=. value gameId
   return $ make q
 
-make q = B.BattingResult
+make q = B.TblBattingResult
         |$| q ! B.id'
         |*| q ! B.gameId'
         |*| q ! B.playerId'

@@ -1,6 +1,6 @@
-DELETE FROM at_bat;
+DELETE FROM tbl_at_bat;
 
-INSERT INTO at_bat (
+INSERT INTO tbl_at_bat (
   game_id,
   player_id,
   at_bat_number,

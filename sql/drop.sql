@@ -1,9 +1,9 @@
--- drop view view_batting_stats;
--- drop view view_pitching_stats;
-drop table at_bat;
-drop table batting_result;
-drop table batting_stats;
-drop table pitching_result;
--- drop table pitching_stats;
-drop table game_score;
-drop table player;
+drop view view_batting_stats;
+drop view view_pitching_stats;
+drop table tbl_at_bat;
+drop table tbl_batting_result;
+drop table tbl_batting_stats;
+drop table tbl_pitching_result;
+drop table tbl_pitching_stats;
+drop table tbl_game_score;
+drop table mst_player;

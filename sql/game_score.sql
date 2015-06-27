@@ -1,6 +1,6 @@
-DELETE FROM game_score;
+DELETE FROM tbl_game_score;
 
-INSERT INTO game_score (
+INSERT INTO tbl_game_score (
   game_date,
   game_result,
   ground,

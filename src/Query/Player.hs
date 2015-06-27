@@ -1,30 +1,34 @@
 {-# LANGUAGE FlexibleContexts #-}
 
 module Query.Player
-    ( fetchByNumber
+    ( fetchAll
+    , fetchByNumber
     , fetchByName
     ) where
 
 import Database.Relational.Query
 
-import qualified Models.Player as P
+import qualified Model.Player as M
 
-fetchByNumber :: String -> Relation () P.Player
+fetchAll :: Relation () M.Player
+fetchAll = relation $ query M.mstPlayer >>= return . make
+
+fetchByNumber :: String -> Relation () M.Player
 fetchByNumber numStr = relation $ do
-  q <- query P.player
-  wheres $ q ! P.uniformNumber' .=. value (Just numStr)
+  q <- query M.mstPlayer
+  wheres $ q ! M.uniformNumber' .=. value (Just numStr)
   return $ make q
 
-fetchByName :: String -> Relation () P.Player
+fetchByName :: String -> Relation () M.Player
 fetchByName name = relation $ do
-  q <- query P.player
-  wheres $ q ! P.playerName' .=. value name
+  q <- query M.mstPlayer
+  wheres $ q ! M.playerName' .=. value name
   return $ make q
 
-make q = P.Player
-         |$| q ! P.id'
-         |*| q ! P.playerName'
-         |*| q ! P.uniformNumber'
-         |*| q ! P.tempUniformNumber'
-         |*| q ! P.createdAt'
-         |*| q ! P.updatedAt'
+make q = M.MstPlayer
+         |$| q ! M.id'
+         |*| q ! M.playerName'
+         |*| q ! M.uniformNumber'
+         |*| q ! M.tempUniformNumber'
+         |*| q ! M.createdAt'
+         |*| q ! M.updatedAt'

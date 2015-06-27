@@ -7,15 +7,15 @@ module Query.PitchingResult
 import Database.Relational.Query
 import GHC.Int (Int32)
 
-import qualified Models.PitchingResult as P
+import qualified Model.Database.TblPitchingResult as P
 
-fetchListByGameId :: GHC.Int.Int32 -> Relation () P.PitchingResult
+fetchListByGameId :: GHC.Int.Int32 -> Relation () P.TblPitchingResult
 fetchListByGameId gameId = relation $ do
-  q <- query P.pitchingResult
+  q <- query P.tblPitchingResult
   wheres $ q ! P.gameId' .=. value gameId
   return $ make q
 
-make q = P.PitchingResult
+make q = P.TblPitchingResult
         |$| q ! P.id'
         |*| q ! P.gameId'
         |*| q ! P.playerId'
@@ -24,10 +24,10 @@ make q = P.PitchingResult
         |*| q ! P.battersFaced'
         |*| q ! P.runs'
         |*| q ! P.earnedRuns'
-        |*| q ! P.strikeouts'
+        |*| q ! P.strikeOuts'
         |*| q ! P.walks'
         |*| q ! P.hits'
-        |*| q ! P.homeruns'
+        |*| q ! P.homeRuns'
         |*| q ! P.errors'
         |*| q ! P.decision'
         |*| q ! P.createdAt'

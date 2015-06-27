@@ -1,7 +1,7 @@
-\i resources/drop.sql
-\i resources/tables.sql
--- \i resources/views.sql
-\i resources/player.sql
-\i resources/game_score.sql
-\i resources/atbat.sql
-\i resources/batting_result.sql
+\i drop.sql
+\i tables.sql
+-- \i views.sql
+\i player.sql
+\i game_score.sql
+\i atbat.sql
+\i batting_result.sql

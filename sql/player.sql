@@ -1,6 +1,6 @@
-DELETE FROM player;
+DELETE FROM mst_player;
 
-insert into player (player_name, uniform_number)
+insert into mst_player (player_name, uniform_number)
 values
 ('陽岱鋼', '1'),
 ('ハーミッダ', '7'),

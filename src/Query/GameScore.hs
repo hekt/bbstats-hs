@@ -1,42 +1,42 @@
 {-# LANGUAGE FlexibleContexts #-}
 
 module Query.GameScore
-    ( fetchByDate
-    , fetchLostGameList
+    ( fetchAll
+    , fetchByDate
     ) where
 
 import Database.Relational.Query
 import Data.Time.Calendar (Day)
 
-import qualified Models.GameScore as G
+import qualified Model.GameScore as M
 
-fetchByDate :: Day -> Relation () G.GameScore
+fetchAll :: Relation () M.GameScore
+fetchAll = relation $  do
+  q <- query M.tblGameScore
+  desc $ q ! M.gameDate'
+  return $ make q
+
+fetchByDate :: Day -> Relation () M.GameScore
 fetchByDate day = relation $ do
-  q <- query G.gameScore
-  wheres $ q ! G.gameDate' .=. value day
+  q <- query M.tblGameScore
+  wheres $ q ! M.gameDate' .=. value day
   return $ make q
 
-fetchLostGameList :: Relation () G.GameScore
-fetchLostGameList = relation $ do
-  q <- query G.gameScore
-  wheres $ q ! G.gameResult' .=. value G.gameResultKindLose
-  return $ make q
-
-make q = G.GameScore
-       |$| q ! G.id'
-       |*| q ! G.gameDate'
-       |*| q ! G.gameNumber'
-       |*| q ! G.gameResult'
-       |*| q ! G.ground'
-       |*| q ! G.attackTurn'
-       |*| q ! G.runs'
-       |*| q ! G.totalRuns'
-       |*| q ! G.totalHits'
-       |*| q ! G.totalErrors'
-       |*| q ! G.opponentName'
-       |*| q ! G.opponentRuns'
-       |*| q ! G.opponentTotalRuns'
-       |*| q ! G.opponentTotalHits'
-       |*| q ! G.opponentTotalErrors'
-       |*| q ! G.createdAt'
-       |*| q ! G.updatedAt'
+make q = M.TblGameScore
+       |$| q ! M.id'
+       |*| q ! M.gameDate'
+       |*| q ! M.gameNumber'
+       |*| q ! M.gameResult'
+       |*| q ! M.ground'
+       |*| q ! M.attackTurn'
+       |*| q ! M.runs'
+       |*| q ! M.totalRuns'
+       |*| q ! M.totalHits'
+       |*| q ! M.totalErrors'
+       |*| q ! M.opponentName'
+       |*| q ! M.opponentRuns'
+       |*| q ! M.opponentTotalRuns'
+       |*| q ! M.opponentTotalHits'
+       |*| q ! M.opponentTotalErrors'
+       |*| q ! M.createdAt'
+       |*| q ! M.updatedAt'

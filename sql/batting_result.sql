@@ -1,6 +1,6 @@
-DELETE FROM batting_result;
+DELETE FROM tbl_batting_result;
 
-INSERT INTO batting_result (
+INSERT INTO tbl_batting_result (
   game_id,
   player_id,
   batting_order,

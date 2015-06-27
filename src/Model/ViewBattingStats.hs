@@ -1,6 +1,6 @@
 {-# LANGUAGE TemplateHaskell, MultiParamTypeClasses, FlexibleInstances #-}
 
-module Models.BattingResult where
+module Model.Database.ViewBattingStats where
 
 import Database.HDBC.Query.TH (defineTableFromDB)
 import Database.HDBC.Schema.PostgreSQL (driverPostgreSQL)
@@ -9,4 +9,4 @@ import Database.Record.TH (derivingShow)
 import DataSource (connect)
 
 $(defineTableFromDB connect
-  driverPostgreSQL "bbstats" "batting_result" [derivingShow])
+  driverPostgreSQL "public" "view_batting_stats" [derivingShow])

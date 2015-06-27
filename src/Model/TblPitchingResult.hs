@@ -1,6 +1,6 @@
 {-# LANGUAGE TemplateHaskell, MultiParamTypeClasses, FlexibleInstances #-}
 
-module Models.PitchingResult where
+module Model.Database.TblPitchingResult where
 
 import Database.HDBC.Query.TH (defineTableFromDB)
 import Database.HDBC.Schema.PostgreSQL (driverPostgreSQL)
@@ -10,7 +10,7 @@ import GHC.Int (Int16)
 import DataSource (connect)
 
 $(defineTableFromDB connect
-  driverPostgreSQL "bbstats" "pitching_result" [derivingShow])
+  driverPostgreSQL "public" "tbl_pitching_result" [derivingShow])
 
 pitcherDecisionKindWin :: GHC.Int.Int16
 pitcherDecisionKindWin = 0
