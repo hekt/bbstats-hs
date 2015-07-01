@@ -1,23 +1,30 @@
 module Handler.GameScore
-    ( getAll
+    ( get
+    , getAll
     , getByDate
     ) where
 
 import           Data.Time.Calendar (Day)
 import           Safe (headMay)
 
-import           Database.Relational.Query (relationalQuery)
 import           Database.HDBC.Session (withConnectionIO, handleSqlError')
-import           Database.HDBC.Record.Query (runQuery)
+import           Database.HDBC.Record.Query
+import           Database.HDBC.Record.Statement (bind, execute)
 import           Database.HDBC.Types (IConnection)
+import           Database.Relational.Query (relationalQuery)
+import           GHC.Int (Int32)
 
-import qualified Query.GameScore as Query
-import qualified Model.GameScore as Model
+import           Query.GameScore
+import           Model.GameScore
 
-getAll :: IConnection conn => conn -> IO [Model.GameScore]
-getAll conn = runQuery conn (relationalQuery Query.fetchAll) ()
+get :: IConnection conn => conn -> Int32 -> IO (Maybe GameScore)
+get conn gid = prepare conn (relationalQuery $ find gid)
+               >>= execute . flip bind () >>= fetch
+    
+getAll :: IConnection conn => conn -> IO [GameScore]
+getAll conn = prepare conn (relationalQuery findAll)
+              >>= execute . flip bind () >>= fetchAll'
 
-getByDate :: IConnection conn => conn -> Day -> IO (Maybe Model.GameScore)
-getByDate conn day =
-    (runQuery conn (relationalQuery $ Query.fetchByDate day) ())
-    >>= return . headMay
+getByDate :: IConnection conn => conn -> Day -> IO (Maybe GameScore)
+getByDate conn day = prepare conn (relationalQuery $ findByDate day)
+                     >>= execute . flip bind () >>= fetch

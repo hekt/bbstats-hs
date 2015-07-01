@@ -1,4 +1,4 @@
-{-# LANGUAGE TemplateHaskell, MultiParamTypeClasses, FlexibleInstances #-}
+{-# LANGUAGE TemplateHaskell, MultiParamTypeClasses, FlexibleInstances, OverloadedStrings #-}
 
 module Model.GameScore where
 
@@ -9,6 +9,7 @@ import           Database.HDBC.Query.TH (defineTableFromDB)
 import           Database.HDBC.Schema.PostgreSQL (driverPostgreSQL)
 import           Database.Record.TH (derivingShow)
 import           GHC.Int (Int16)
+import           Safe (readMay)
 
 import           DataSource (connect)
 
@@ -43,19 +44,21 @@ gameResultKindWin   = 0
 gameResultKindLose  = 1
 gameResultKindDraw  = 2
 
-toGameResultKindString :: Int16 -> String
-toGameResultKindString 0 = "WIN"
-toGameResultKindString 1 = "LOSE"
-toGameResultKindString 2 = "DRAW"
+toGameResultKindString :: Int16 -> Maybe String
+toGameResultKindString 0 = Just "WIN"
+toGameResultKindString 1 = Just "LOSE"
+toGameResultKindString 2 = Just "DRAW"
+toGameResultKindString _ = Nothing
 
 attackTurnKindTop    :: Int16
 attackTurnKindBottom :: Int16
 attackTurnKindTop     = 0
 attackTurnKindBottom  = 1
 
-toAttackTurnString :: Int16 -> String
-toAttackTurnString 0 = "TOP"
-toAttackTurnString 1 = "BOTTOM"
+toAttackTurnString :: Int16 -> Maybe String
+toAttackTurnString 0 = Just "TOP"
+toAttackTurnString 1 = Just "BOTTOM"
+toAttackTurnString _ = Nothing
 
-toRunsList :: String -> [Int]
-toRunsList = read
+toRunsList :: String -> Maybe [Int]
+toRunsList = readMay

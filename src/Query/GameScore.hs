@@ -1,42 +1,31 @@
 {-# LANGUAGE FlexibleContexts #-}
 
 module Query.GameScore
-    ( fetchAll
-    , fetchByDate
+    ( find
+    , findAll
+    , findByDate
     ) where
 
-import Database.Relational.Query
-import Data.Time.Calendar (Day)
+import           Database.Relational.Query hiding (id')
+import           Data.Time.Calendar (Day)
+import           GHC.Int (Int32)
 
-import qualified Model.GameScore as M
+import           Model.GameScore
 
-fetchAll :: Relation () M.GameScore
-fetchAll = relation $  do
-  q <- query M.tblGameScore
-  desc $ q ! M.gameDate'
-  return $ make q
+find :: Int32 -> Relation () GameScore
+find gid = relation $ do
+  q <- query tblGameScore
+  wheres $ q ! id' .=. value gid
+  return q
 
-fetchByDate :: Day -> Relation () M.GameScore
-fetchByDate day = relation $ do
-  q <- query M.tblGameScore
-  wheres $ q ! M.gameDate' .=. value day
-  return $ make q
+findAll :: Relation () GameScore
+findAll = relation $  do
+  q <- query tblGameScore
+  desc $ q ! gameDate'
+  return q
 
-make q = M.TblGameScore
-       |$| q ! M.id'
-       |*| q ! M.gameDate'
-       |*| q ! M.gameNumber'
-       |*| q ! M.gameResult'
-       |*| q ! M.ground'
-       |*| q ! M.attackTurn'
-       |*| q ! M.runs'
-       |*| q ! M.totalRuns'
-       |*| q ! M.totalHits'
-       |*| q ! M.totalErrors'
-       |*| q ! M.opponentName'
-       |*| q ! M.opponentRuns'
-       |*| q ! M.opponentTotalRuns'
-       |*| q ! M.opponentTotalHits'
-       |*| q ! M.opponentTotalErrors'
-       |*| q ! M.createdAt'
-       |*| q ! M.updatedAt'
+findByDate :: Day -> Relation () GameScore
+findByDate day = relation $ do
+  q <- query tblGameScore
+  wheres $ q ! gameDate' .=. value day
+  return q

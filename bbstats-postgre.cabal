@@ -34,6 +34,9 @@ executable bbstats-postgre
                      , aeson
                      , split
                      , bytestring
+                     , transformers
+                     , mtl
+                     , scotty
                      -- dev
                      , aeson-pretty
   hs-source-dirs:      src

@@ -36,14 +36,14 @@ CREATE TABLE tbl_at_bat (
   id                   serial,
   game_id              integer    NOT NULL,
   player_id            integer 	  NOT NULL,
-  at_bat_number         smallint   NOT NULL,
+  at_bat_number        smallint   NOT NULL,
   inning               smallint   NOT NULL,
   rbi                  smallint   NOT NULL DEFAULT 0,
   out_count            smallint   NOT NULL,
   result_text          varchar(8) NOT NULL,
   result_kind          varchar(4) NOT NULL,
   is_risp              boolean 	  NOT NULL DEFAULT FALSE,
-  is_counts_at_bat      boolean 	  NOT NULL,
+  is_counts_at_bat     boolean 	  NOT NULL,
   created_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP,
   primary key (id),
@@ -70,25 +70,25 @@ CREATE TABLE tbl_batting_result (
   unique (game_id, player_id)
 );
 
-CREATE TABLE tbl_batting_stats (
-  player_id integer NOT NULL,
-  plate_appearances  integer NOT NULL DEFAULT 0,
-  games  integer NOT NULL DEFAULT 0,
-  at_bats  integer NOT NULL DEFAULT 0,
-  rbi  integer NOT NULL DEFAULT 0,
-  hits  integer NOT NULL DEFAULT 0,
-  walks  integer NOT NULL DEFAULT 0,
-  home_runs  integer NOT NULL DEFAULT 0,
-  runs  integer NOT NULL DEFAULT 0,
-  risp_at_bats  integer NOT NULL DEFAULT 0,
-  risp_hits  integer NOT NULL DEFAULT 0,
-  stolen_bases  integer NOT NULL DEFAULT 0,
-  errors  integer NOT NULL DEFAULT 0,
-  created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (player_id),
-  FOREIGN KEY (player_id) REFERENCES mst_player(id)
-);
+-- CREATE TABLE tbl_batting_stats (
+--   player_id integer NOT NULL,
+--   plate_appearances  integer NOT NULL DEFAULT 0,
+--   games  integer NOT NULL DEFAULT 0,
+--   at_bats  integer NOT NULL DEFAULT 0,
+--   rbi  integer NOT NULL DEFAULT 0,
+--   hits  integer NOT NULL DEFAULT 0,
+--   walks  integer NOT NULL DEFAULT 0,
+--   home_runs  integer NOT NULL DEFAULT 0,
+--   runs  integer NOT NULL DEFAULT 0,
+--   risp_at_bats  integer NOT NULL DEFAULT 0,
+--   risp_hits  integer NOT NULL DEFAULT 0,
+--   stolen_bases  integer NOT NULL DEFAULT 0,
+--   errors  integer NOT NULL DEFAULT 0,
+--   created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--   updated_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--   PRIMARY KEY (player_id),
+--   FOREIGN KEY (player_id) REFERENCES mst_player(id)
+-- );
 
 CREATE TABLE tbl_pitching_result (
   id                serial,
@@ -113,24 +113,24 @@ CREATE TABLE tbl_pitching_result (
   unique (player_id, game_id)
 );
 
-CREATE TABLE tbl_pitching_stats (
-  player_id  integer NOT NULL,
-  games  integer NOT NULL,
-  outs  integer NOT NULL,
-  batters_faced  integer NOT NULL,
-  runs  integer NOT NULL,
-  earned_runs  integer NOT NULL,
-  strike_outs  integer NOT NULL,
-  walks  integer NOT NULL,
-  hits  integer NOT NULL,
-  home_runs integer NOT NULL,
-  errors  integer NOT NULL,
-  wins  integer NOT NULL,
-  loses  integer NOT NULL,
-  holds  integer NOT NULL,
-  saves  integer NOT NULL,
-  created_at  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (player_id),
-  FOREIGN KEY (player_id) REFERENCES mst_player(id)
-);
+-- CREATE TABLE tbl_pitching_stats (
+--   player_id  integer NOT NULL,
+--   games  integer NOT NULL,
+--   outs  integer NOT NULL,
+--   batters_faced  integer NOT NULL,
+--   runs  integer NOT NULL,
+--   earned_runs  integer NOT NULL,
+--   strike_outs  integer NOT NULL,
+--   walks  integer NOT NULL,
+--   hits  integer NOT NULL,
+--   home_runs integer NOT NULL,
+--   errors  integer NOT NULL,
+--   wins  integer NOT NULL,
+--   loses  integer NOT NULL,
+--   holds  integer NOT NULL,
+--   saves  integer NOT NULL,
+--   created_at  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--   updated_at  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--   PRIMARY KEY (player_id),
+--   FOREIGN KEY (player_id) REFERENCES mst_player(id)
+-- );
