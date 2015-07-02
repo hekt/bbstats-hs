@@ -17,15 +17,18 @@ type BattingStats = ViewBattingStats
 instance ToJSON BattingStats where
     toJSON m =
         object
-        [ "player_id"         .= playerId m
-        , "plate_appearances" .= plateAppearances m
-        , "at_bats"           .= atBats m
-        , "at_bats_risp"      .= atBatsRisp m
-        , "rbi"               .= rbi m
-        , "hits"              .= hits m
-        , "hits_risp"         .= hitsRisp m
-        , "walks"             .= walks m
-        , "home_runs"         .= homeRuns m
-        , "runs"              .= runs m
-        , "stolen_bases"      .= stolenBases m
+        [ "player_id"           .= playerId m
+        , "player_name"         .= playerName m
+        , "uniform_number"      .= uniformNumber m
+        , "temp_uniform_number" .= tempUniformNumber m
+        , "plate_appearances"   .= plateAppearances m
+        , "at_bats"             .= atBats m
+        , "at_bats_risp"        .= atBatsRisp m
+        , "rbi"                 .= rbi m
+        , "hits"                .= hits m
+        , "hits_risp"           .= hitsRisp m
+        , "walks"               .= walks m
+        , "home_runs"           .= homeRuns m
+        , "runs"                .= runs m
+        , "stolen_bases"        .= stolenBases m
         ]

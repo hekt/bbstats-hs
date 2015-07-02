@@ -3,21 +3,18 @@ module Handler.BattingStats
     , getAll
     ) where
 
-import           Database.HDBC.Record.Query
-import           Database.HDBC.Record.Statement (bind, execute)
-import           Database.HDBC.Session (withConnectionIO, handleSqlError')
 import           Database.HDBC.Types (IConnection)
 import           Database.Relational.Query
 import           GHC.Int (Int32)
-import           Safe (headMay)
 
+import           Handler.Util (fetch, fetchAll')
 import           Model.BattingStats
 import           Query.BattingStats
+import qualified Model.Player as Player
+import qualified Query.Player as Player
 
 get :: IConnection conn => conn -> Int32 -> IO (Maybe BattingStats)
-get conn pid = prepare conn (relationalQuery $ find pid)
-               >>= execute . flip bind () >>= fetch
+get conn pid = fetch conn $ find pid
 
 getAll :: IConnection conn => conn -> IO [BattingStats]
-getAll conn = prepare conn (relationalQuery findAll)
-              >>= execute . flip bind () >>= fetchAll'
+getAll conn = fetchAll' conn findAll

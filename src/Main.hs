@@ -14,17 +14,33 @@ import           Web.Scotty
 import           System.Environment (getArgs)
 
 import           DataSource (connect)
-import           Service.GameService as Service
+import qualified Service.GameService as GameService
+import qualified Service.StatsService as StatsService
 
 main :: IO ()
 main = scotty 52606 $ do
-  get "/api/list" listAction
-  get "/api/detail/:gid" $ read <$> param "gid" >>= detailAction
+  get "/api/list" gameListAction
+  get "/api/detail/:gid" $ read <$> param "gid" >>= gameDetailAction
+  get "/api/stats/batting" $ battingStatsAction
+  get "/api/stats/pitching" $ pitchingStatsAction
+  get "/api/stats/:pid" $ read <$> param "pid" >>= playerStatsAction
 
-listAction = do
+gameListAction = do
   setHeader "content-type" "application/json; charset=UTF-8"
-  json =<< liftIO Service.gameSummaryList
+  json =<< liftIO GameService.gameSummaryList
 
-detailAction gid = do
+gameDetailAction gid = do
   setHeader "content-type" "application/json; charset=UTF-8"
-  json =<< liftIO (Service.gameDetail gid)
+  json =<< liftIO (GameService.gameDetail gid)
+
+battingStatsAction = do
+  setHeader "content-type" "application/json; charset=UTF-8"
+  json =<< liftIO StatsService.battingStats
+
+pitchingStatsAction = do
+  setHeader "content-type" "application/json; charset=UTF-8"
+  json =<< liftIO StatsService.pitchingStats
+
+playerStatsAction pid = do
+  setHeader "content-type" "application/json; charset=UFT-8"
+  json =<< liftIO (StatsService.playerStats pid)

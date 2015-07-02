@@ -17,19 +17,22 @@ type PitchingStats = ViewPitchingStats
 instance ToJSON PitchingStats where
     toJSON m =
         object
-        [ "player_id"     .= playerId m
-        , "games"         .= games m
-        , "outs"          .= outs m
-        , "batters_faced" .= battersFaced m
-        , "runs"          .= runs m
-        , "earned_runs"   .= earnedRuns m
-        , "strike_outs"   .= strikeOuts m
-        , "walks"         .= walks m
-        , "hits"          .= hits m
-        , "home_runs"     .= homeRuns m
-        , "errors"        .= errors m
-        , "wins"          .= wins m
-        , "loses"         .= loses m
-        , "holds"         .= holds m
-        , "saves"         .= saves m
+        [ "player_id"           .= playerId m
+        , "player_name"         .= playerName m
+        , "uniform_number"      .= uniformNumber m
+        , "temp_uniform_number" .= tempUniformNumber m
+        , "games"               .= games m
+        , "outs"                .= outs m
+        , "batters_faced"       .= battersFaced m
+        , "runs"                .= runs m
+        , "earned_runs"         .= earnedRuns m
+        , "strike_outs"         .= strikeOuts m
+        , "walks"               .= walks m
+        , "hits"                .= hits m
+        , "home_runs"           .= homeRuns m
+        , "errors"              .= errors m
+        , "wins"                .= wins m
+        , "loses"               .= loses m
+        , "holds"               .= holds m
+        , "saves"               .= saves m
         ]

@@ -3,10 +3,9 @@
 module Service.GameService where
 
 import           Data.Aeson
-import           Database.HDBC.Session (withConnectionIO, handleSqlError')
-import           Database.Relational.Query (query)
 import           GHC.Int (Int32)
 
+import           Service.Util (handle)
 import           DataSource (connect)
 import qualified Handler.AtBat as AtBat
 import qualified Handler.GameScore as Score
@@ -14,12 +13,12 @@ import qualified Handler.BattingResult as Batting
 import qualified Handler.PitchingResult as Pitching
 
 gameSummaryList :: IO Value
-gameSummaryList = handleSqlError' $ withConnectionIO connect $ \conn -> do
+gameSummaryList = handle connect $ \conn -> do
   scores <- Score.getAll conn
   return $ toJSON scores
 
 gameDetail :: Int32 -> IO Value
-gameDetail gid = handleSqlError' $ withConnectionIO connect $ \conn -> do
+gameDetail gid = handle connect $ \conn -> do
   atbats    <- AtBat.getListByGameId conn gid
   score     <- Score.get conn gid
   battings  <- Batting.getListWithPlayerByGameId conn gid
