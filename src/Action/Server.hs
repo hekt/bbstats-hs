@@ -5,10 +5,11 @@ module Action.Server (server) where
 import           Control.Monad
 import           Data.Aeson hiding (json')
 import           Text.Read (readMaybe)
+import           Database.HDBC.Session (withConnectionIO')
 import           Web.Scotty
 
 import           DataSource (connect)
-import           Action.Util (json', handleSql, notFoundAction)
+import           Action.Util (json', notFoundAction)
 import qualified Handler.AtBat as AtBat
 import qualified Handler.BattingResult as Batting
 import qualified Handler.BattingStats as BattingStats
@@ -26,12 +27,12 @@ server = scotty 52606 $ do
   get "/api/stats/:pid"     $ param "pid" >>= playerStatsAction
 
 listAction :: ActionM ()
-listAction = json' $ handleSql connect $ \conn ->
+listAction = json' $ withConnectionIO' connect $ \conn ->
   Score.getAll conn >>= return . toJSON
 
 detailAction :: String -> ActionM ()
 detailAction = maybe notFoundAction act . readMaybe where
-  act gid = json' $ handleSql connect $ \conn -> do
+  act gid = json' $ withConnectionIO' connect $ \conn -> do
     atbats    <- AtBat.getListByGameId conn gid
     score     <- Score.get conn gid
     battings  <- Batting.getListWithPlayerByGameId conn gid
@@ -43,16 +44,16 @@ detailAction = maybe notFoundAction act . readMaybe where
                     ]
 
 battingStatsAction :: ActionM ()
-battingStatsAction = json' $ handleSql connect $ \conn ->
+battingStatsAction = json' $ withConnectionIO' connect $ \conn ->
   BattingStats.getAll conn >>= return . toJSON
 
 pitchingStatsAction :: ActionM ()
-pitchingStatsAction = json' $ handleSql connect $ \conn ->
+pitchingStatsAction = json' $ withConnectionIO' connect $ \conn ->
   PitchingStats.getAll conn >>= return . toJSON
 
 playerStatsAction :: String -> ActionM ()
 playerStatsAction = maybe notFoundAction act . readMaybe where
-  act pid = json' $ handleSql connect $ \conn -> do
+  act pid = json' $ withConnectionIO' connect $ \conn -> do
     p   <- Player.get conn pid
     bss <- BattingStats.get conn pid
     pss <- PitchingStats.get conn pid

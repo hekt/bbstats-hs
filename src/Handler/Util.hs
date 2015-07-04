@@ -2,6 +2,7 @@
 
 module Handler.Util where
 
+import           DataSource (schemaName)
 import qualified Database.HDBC.Record.Query as Q
 import           Database.HDBC.Record.Statement (bind, execute)
 import           Database.HDBC.Types (IConnection)
@@ -21,4 +22,4 @@ fetchAll' conn q = Q.prepare conn (relationalQuery q)
 
 refleshSql :: String -> String
 refleshSql tableName = concat [ "REFRESH MATERIALIZED VIEW "
-                              , tableName, ";" ]
+                              , schemaName, ".", tableName, ";" ]

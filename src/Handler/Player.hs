@@ -4,10 +4,12 @@ module Handler.Player
     , getByName
     , getByNumber
     , getPlayerNameMap
+    , put
     ) where
 
 import qualified Data.Map as Map
 import           Data.Maybe (fromJust, isJust)
+import           Database.HDBC.Record (runInsertQuery)
 import           Database.HDBC.Types (IConnection)
 import           Database.Relational.Query hiding (isJust)
 import           GHC.Int (Int32)
@@ -40,3 +42,6 @@ getPlayerNameMap conn = getAll conn >>= return . Map.fromList . toTuples
               (fromJust $ uniformNumber p, playerName p)
               : toTuples ps
           | otherwise = toTuples ps
+
+put :: IConnection conn => conn -> PlayerP -> IO Integer
+put conn p = runInsertQuery conn (persist p) ()
