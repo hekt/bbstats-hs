@@ -46,8 +46,8 @@ piPlayerP = PlayerP
             |*| tempUniformNumber'
 
 persist :: PlayerP -> InsertQuery ()
-persist pm = typedInsertQuery tableOfMstPlayer piPlayerP $
+persist p = typedInsertQuery tableOfMstPlayer piPlayerP $
             relation . return $ PlayerP
-            |$| value (pPlayerName pm)
-            |*| value (pUniformNumber pm)
-            |*| value (pTempUniformNumber pm)
+            |$| value (pPlayerName p)
+            |*| value (pUniformNumber p)
+            |*| value (pTempUniformNumber p)

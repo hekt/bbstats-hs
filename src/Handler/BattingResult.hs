@@ -4,6 +4,7 @@ module Handler.BattingResult
     , getListWithPlayerByGameId
     ) where
 
+import           Database.HDBC.Record (runInsertQuery)
 import           Database.HDBC.Types (IConnection)
 import           Database.Relational.Query
 import           GHC.Int (Int32)
@@ -28,3 +29,6 @@ getListWithPlayerByGameId conn = fetchAll' conn . q
             p <- query Player.mstPlayer
             on $ b ! playerId' .=. p ! Player.id'
             return $ b >< p
+
+put :: IConnection conn => conn -> BattingResultP -> IO Integer
+put conn b = runInsertQuery conn (persist b) ()

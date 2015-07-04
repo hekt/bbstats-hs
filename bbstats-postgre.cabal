@@ -38,6 +38,9 @@ executable bbstats-postgre
                      , scotty
                      , http-types
                      , process
+                     , text
+                     , unordered-containers
+                     , vector
                      -- dev
                      , aeson-pretty
   hs-source-dirs:      src
