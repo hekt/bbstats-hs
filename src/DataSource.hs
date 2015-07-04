@@ -1,8 +1,12 @@
-module DataSource
-       ( connect
-       ) where
+module DataSource where
 
 import Database.HDBC.PostgreSQL (connectPostgreSQL, Connection)
 
+dbName :: String
+dbName = "bbstats-test"
+
+schemaName :: String
+schemaName = "public"
+
 connect :: IO Connection
-connect = connectPostgreSQL "dbname=bbstats-test"
+connect = connectPostgreSQL $ "dbname=" ++ dbName

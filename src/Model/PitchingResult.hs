@@ -13,6 +13,9 @@ import           DataSource (connect)
 $(defineTableFromDB connect
   driverPostgreSQL "public" "tbl_pitching_result" [derivingShow])
 
+tableName :: String
+tableName = "tbl_pitching_result"
+
 type PitchingResult = TblPitchingResult
 
 instance ToJSON PitchingResult where

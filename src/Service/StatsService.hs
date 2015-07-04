@@ -1,8 +1,7 @@
-{-# LANGUAGE BangPatterns, OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Service.StatsService where
 
-import           Control.Monad.Trans (liftIO)
 import           Data.Aeson
 import           GHC.Int (Int32)
 

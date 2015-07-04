@@ -13,10 +13,10 @@ import           Model.GameScore
 import           Query.GameScore
 
 get :: IConnection conn => conn -> Int32 -> IO (Maybe GameScore)
-get conn gid = fetch conn $ find gid
+get conn = fetch conn .  find
     
 getAll :: IConnection conn => conn -> IO [GameScore]
 getAll conn = fetchAll' conn findAll
 
 getByDate :: IConnection conn => conn -> Day -> IO (Maybe GameScore)
-getByDate conn day = fetch conn $ findByDate day
+getByDate conn = fetch conn . findByDate

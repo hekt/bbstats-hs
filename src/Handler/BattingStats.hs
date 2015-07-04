@@ -14,7 +14,7 @@ import qualified Model.Player as Player
 import qualified Query.Player as Player
 
 get :: IConnection conn => conn -> Int32 -> IO (Maybe BattingStats)
-get conn pid = fetch conn $ find pid
+get conn = fetch conn . find
 
 getAll :: IConnection conn => conn -> IO [BattingStats]
 getAll conn = fetchAll' conn findAll

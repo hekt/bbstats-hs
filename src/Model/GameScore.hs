@@ -9,7 +9,7 @@ import           Database.HDBC.Query.TH (defineTableFromDB)
 import           Database.HDBC.Schema.PostgreSQL (driverPostgreSQL)
 import           Database.Record.TH (derivingShow)
 import           GHC.Int (Int16)
-import           Safe (readMay)
+import           Text.Read (readMaybe)
 
 import           DataSource (connect)
 
@@ -61,4 +61,4 @@ toAttackTurnString 1 = Just "BOTTOM"
 toAttackTurnString _ = Nothing
 
 toRunsList :: String -> Maybe [Int]
-toRunsList = readMay
+toRunsList = readMaybe

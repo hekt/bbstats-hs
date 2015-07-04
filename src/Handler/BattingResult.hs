@@ -15,15 +15,15 @@ import qualified Model.Player as Player
 import qualified Query.Player as Player
 
 getListByGameId :: IConnection conn => conn -> Int32 -> IO [BattingResult]
-getListByGameId conn gid = fetchAll' conn $ findListByGameId gid
+getListByGameId conn = fetchAll' conn . findListByGameId
 
 getListByPlayerId ::  IConnection conn => conn -> Int32 -> IO [BattingResult]
-getListByPlayerId conn pid = fetchAll' conn $ findListByPlayerId pid
+getListByPlayerId conn = fetchAll' conn . findListByPlayerId
 
 getListWithPlayerByGameId :: IConnection conn =>
                    conn -> Int32 -> IO [(BattingResult, Player.Player)]
-getListWithPlayerByGameId conn gid = fetchAll' conn q
-    where q = relation $ do
+getListWithPlayerByGameId conn = fetchAll' conn . q
+    where q gid = relation $ do
             b <- query $ findListByGameId gid
             p <- query Player.mstPlayer
             on $ b ! playerId' .=. p ! Player.id'

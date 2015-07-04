@@ -6,12 +6,15 @@ import           Data.Aeson
 import           Database.HDBC.Query.TH (defineTableFromDB)
 import           Database.HDBC.Schema.PostgreSQL (driverPostgreSQL)
 import           Database.Record.TH (derivingShow)
-import           Safe (readMay)
+import           Text.Read (readMaybe)
 
 import           DataSource (connect)
 
 $(defineTableFromDB connect
   driverPostgreSQL "public" "tbl_batting_result" [derivingShow])
+
+tableName :: String
+tableName = "tbl_batting_result"
 
 type BattingResult = TblBattingResult
 
@@ -29,4 +32,4 @@ instance ToJSON BattingResult where
         ]
 
 toPositionsList :: String -> Maybe [Int]
-toPositionsList =  readMay
+toPositionsList =  readMaybe

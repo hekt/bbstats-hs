@@ -16,16 +16,16 @@ import qualified Model.GameScore as GameScore
 import qualified Query.GameScore as GameScore
 
 getListByGameId :: IConnection conn => conn -> Int32 -> IO [AtBat]
-getListByGameId conn gid = fetchAll' conn $ findListByGameId gid
+getListByGameId conn = fetchAll' conn . findListByGameId
 
 getListByPlayerId :: IConnection conn => conn -> Int32 -> IO [AtBat]
-getListByPlayerId conn pid = fetchAll' conn $ findListByPlayerId pid
+getListByPlayerId conn = fetchAll' conn . findListByPlayerId
 
 getListWithDateByPlayerId :: IConnection conn =>
                              conn -> Int32 -> IO [(AtBat, Day)]
-getListWithDateByPlayerId conn pid = fetchAll' conn q
-    where q = relation $ do
-                a <- query $ findListByPlayerId pid
-                g <- query GameScore.tblGameScore
-                on $ a ! gameId' .=. g ! GameScore.id'
-                return $ a >< (g ! GameScore.gameDate')
+getListWithDateByPlayerId conn = fetchAll' conn . q
+    where q pid = relation $ do
+                    a <- query $ findListByPlayerId pid
+                    g <- query GameScore.tblGameScore
+                    on $ a ! gameId' .=. g ! GameScore.id'
+                    return $ a >< (g ! GameScore.gameDate')

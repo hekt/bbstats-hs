@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Action.Util where
 
 import           Control.Monad.Trans (liftIO)

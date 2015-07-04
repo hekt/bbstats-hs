@@ -7,10 +7,13 @@ import           Database.HDBC.Query.TH (defineTableFromDB)
 import           Database.HDBC.Schema.PostgreSQL (driverPostgreSQL)
 import           Database.Record.TH (derivingShow)
 
-import DataSource (connect)
+import DataSource (connect, schemaName)
 
 $(defineTableFromDB connect
-  driverPostgreSQL "public" "view_pitching_stats" [derivingShow])
+  driverPostgreSQL schemaName "view_pitching_stats" [derivingShow])
+
+tableName :: String
+tableName = "view_pitching_stats"
 
 type PitchingStats = ViewPitchingStats
 

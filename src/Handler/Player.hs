@@ -17,16 +17,16 @@ import           Model.Player
 import           Query.Player
 
 get :: IConnection conn => conn -> Int32 -> IO (Maybe Player)
-get conn pid = fetch conn $ find pid
+get conn = fetch conn . find
 
 getAll :: IConnection conn => conn -> IO [Player]
 getAll conn = fetchAll' conn findAll
 
 getByName :: IConnection conn => conn -> String -> IO (Maybe Player)
-getByName conn name = fetch conn $ findByName name
+getByName conn = fetch conn . findByName
 
 getByNumber :: IConnection conn => conn -> String -> IO (Maybe Player)
-getByNumber conn numStr = fetch conn $ findByNumber numStr
+getByNumber conn = fetch conn . findByNumber
 
 getPlayerNameMap :: IConnection conn => conn -> IO (Map.Map String String)
 getPlayerNameMap conn = getAll conn >>= return . Map.fromList . toTuples
