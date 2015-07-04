@@ -1,21 +1,29 @@
 {-# LANGUAGE FlexibleContexts #-}
 
 module Query.Player
-    ( findAll
+    ( find
+    , findAll
     , findByNumber
     , findByName
     ) where
 
-import Database.Relational.Query
+import           Database.Relational.Query
+import           GHC.Int (Int32)
 
-import qualified Model.Player as M
+import           Model.Player as M
 
-findAll :: Relation () M.Player
+find :: Int32 -> Relation () M.Player
+find pid = relation $ do
+  q <- query M.mstPlayer
+  wheres $ q ! M.id' .=. value pid
+  return q
+
+findAll :: Relation () Player
 findAll = relation $ query M.mstPlayer
 
-findByNumber :: String -> Relation () M.Player
+findByNumber :: String -> Relation () Player
 findByNumber numStr = relation $ do
-  q <- query M.mstPlayer
+  q <- query mstPlayer
   wheres $ q ! M.uniformNumber' .=. value (Just numStr)
   return q
 

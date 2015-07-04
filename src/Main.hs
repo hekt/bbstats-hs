@@ -3,44 +3,42 @@
 module Main where
 
 import           Control.Monad
-import           Control.Monad.Trans (liftIO)
 import qualified Data.ByteString.Lazy.Char8 as BS
-import           Data.Aeson (toJSON, object, (.=))
+import           Data.Aeson (Value, toJSON, object, (.=))
 import           Data.Aeson.Encode.Pretty
 import qualified Data.Map as Map
 import           Database.HDBC.Session (withConnectionIO, handleSqlError')
 import           GHC.Int (Int32)
-import           Web.Scotty
+import           Text.Read (readMaybe)
 import           System.Environment (getArgs)
+import           Web.Scotty
 
+import           Action.Util (json', notFoundAction)
 import           DataSource (connect)
 import qualified Service.GameService as GameService
 import qualified Service.StatsService as StatsService
 
 main :: IO ()
 main = scotty 52606 $ do
-  get "/api/list" gameListAction
-  get "/api/detail/:gid" $ read <$> param "gid" >>= gameDetailAction
-  get "/api/stats/batting" $ battingStatsAction
-  get "/api/stats/pitching" $ pitchingStatsAction
-  get "/api/stats/:pid" $ read <$> param "pid" >>= playerStatsAction
+  get "/api/game/list"        gameListAction
+  get "/api/game/:gid"      $ param "gid" >>= gameDetailAction
+  get "/api/stats/batting"    battingStatsAction
+  get "/api/stats/pitching"   pitchingStatsAction
+  get "/api/stats/:pid"     $ param "pid" >>= playerStatsAction
 
-gameListAction = do
-  setHeader "content-type" "application/json; charset=UTF-8"
-  json =<< liftIO GameService.gameSummaryList
+gameListAction :: ActionM ()
+gameListAction = json' GameService.gameSummaryList
 
-gameDetailAction gid = do
-  setHeader "content-type" "application/json; charset=UTF-8"
-  json =<< liftIO (GameService.gameDetail gid)
+gameDetailAction :: String -> ActionM ()
+gameDetailAction = maybe notFoundAction act . readMaybe
+    where act gid = json' $ GameService.gameDetail gid
 
-battingStatsAction = do
-  setHeader "content-type" "application/json; charset=UTF-8"
-  json =<< liftIO StatsService.battingStats
+battingStatsAction :: ActionM ()
+battingStatsAction = json' StatsService.battingStats
 
-pitchingStatsAction = do
-  setHeader "content-type" "application/json; charset=UTF-8"
-  json =<< liftIO StatsService.pitchingStats
+pitchingStatsAction :: ActionM ()
+pitchingStatsAction = json' StatsService.pitchingStats
 
-playerStatsAction pid = do
-  setHeader "content-type" "application/json; charset=UFT-8"
-  json =<< liftIO (StatsService.playerStats pid)
+playerStatsAction :: String -> ActionM ()
+playerStatsAction = maybe notFoundAction act . readMaybe
+    where act pid = json' $ StatsService.playerStats pid

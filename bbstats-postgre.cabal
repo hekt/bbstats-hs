@@ -29,7 +29,6 @@ executable bbstats-postgre
                      , HDBC
                      , HDBC-postgresql
                      , time
-                     , safe
                      , containers
                      , aeson
                      , split
@@ -37,6 +36,7 @@ executable bbstats-postgre
                      , transformers
                      , mtl
                      , scotty
+                     , http-types
                      -- dev
                      , aeson-pretty
   hs-source-dirs:      src

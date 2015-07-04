@@ -1,5 +1,6 @@
 module Handler.Player
-    ( getAll
+    ( get
+    , getAll
     , getByName
     , getByNumber
     , getPlayerNameMap
@@ -8,20 +9,24 @@ module Handler.Player
 import qualified Data.Map as Map
 import           Data.Maybe (fromJust, isJust)
 import           Database.HDBC.Types (IConnection)
-import           Database.Relational.Query
+import           Database.Relational.Query hiding (isJust)
+import           GHC.Int (Int32)
 
 import           Handler.Util (fetch, fetchAll')
 import           Model.Player
 import           Query.Player
 
+get :: IConnection conn => conn -> Int32 -> IO (Maybe Player)
+get conn pid = fetch conn $ find pid
+
 getAll :: IConnection conn => conn -> IO [Player]
-getAll conn = fetchAll' conn fetchAll
+getAll conn = fetchAll' conn findAll
 
 getByName :: IConnection conn => conn -> String -> IO (Maybe Player)
-getByName conn name = fetch conn $ fetchByName name
+getByName conn name = fetch conn $ findByName name
 
 getByNumber :: IConnection conn => conn -> String -> IO (Maybe Player)
-getByNumber conn numStr = fetch conn $ fetchByNumber name
+getByNumber conn numStr = fetch conn $ findByNumber numStr
 
 getPlayerNameMap :: IConnection conn => conn -> IO (Map.Map String String)
 getPlayerNameMap conn = getAll conn >>= return . Map.fromList . toTuples
