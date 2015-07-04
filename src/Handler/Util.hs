@@ -18,3 +18,7 @@ fetchAll' :: (IConnection conn, FromSql SqlValue a) =>
          conn -> Relation () a -> IO [a]
 fetchAll' conn q = Q.prepare conn (relationalQuery q)
                   >>= execute . flip bind () >>= Q.fetchAll'
+
+refleshSql :: String -> String
+refleshSql tableName = concat [ "REFRESH MATERIALIZED VIEW "
+                              , tableName, ";" ]
