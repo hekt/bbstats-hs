@@ -10,3 +10,9 @@ schemaName = "public"
 
 connect :: IO Connection
 connect = connectPostgreSQL $ "dbname=" ++ dbName
+
+gameScoreCsvFileName :: String
+gameScoreCsvFileName = "score.csv"
+
+battingResultCsvFileName :: String
+battingResultCsvFileName = "batting.csv"

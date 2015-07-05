@@ -28,6 +28,7 @@ executable bbstats-postgre
                      , containers
                      -- , csv
                      , directory
+                     , filepath
                      , HDBC
                      , HDBC-postgresql
                      , HDBC-session
@@ -35,6 +36,7 @@ executable bbstats-postgre
                      , mtl
                      , persistable-record
                      -- , process
+                     , regex-posix
                      , relational-query
                      , relational-query-HDBC
                      , scotty
