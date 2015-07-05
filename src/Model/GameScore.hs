@@ -4,7 +4,8 @@ module Model.GameScore where
 
 import           Control.Monad
 import           Data.Aeson
-import           Data.List.Split (splitOn)
+import           Data.Aeson.Types (Parser)
+import qualified Data.Text as T (Text)
 import           Data.Time.Calendar (Day)
 import           Database.HDBC.Query.TH
 import           Database.HDBC.Schema.PostgreSQL (driverPostgreSQL)
@@ -79,15 +80,15 @@ instance FromJSON GameScoreP where
   parseJSON (Object v) = GameScoreP
                          <$> v .: "game_date"
                          <*> v .: "game_number"
-                         <*> v .: "game_result"
+                         <*> enumParser toGameResultKind v "game_result"
                          <*> v .: "ground"
-                         <*> v .: "attack_turn"
+                         <*> enumParser toAttackTurnKind v "attack_turn"
                          <*> asString v "runs"
                          <*> v .: "total_runs"
                          <*> v .: "total_hits"
                          <*> v .: "total_errors"
                          <*> v .: "opponent_name"
-                         <*> asString v "opponent_runs"
+                         <*> asMaybeString v "opponent_runs"
                          <*> v .: "opponent_total_runs"
                          <*> v .: "opponent_total_hits"
                          <*> v .: "opponent_total_errors"
@@ -95,6 +96,23 @@ instance FromJSON GameScoreP where
 
 tableName :: String
 tableName = "tbl_game_score"
+
+insertColumnNames :: [String]
+insertColumnNames =     [ "game_date"
+                        , "game_number"
+                        , "game_result"
+                        , "ground"
+                        , "attack_turn"
+                        , "runs"
+                        , "total_runs"
+                        , "total_hits"
+                        , "total_errors"
+                        , "opponent_name"
+                        , "opponent_runs"
+                        , "opponent_total_runs"
+                        , "opponent_total_hits"
+                        , "opponent_total_errors"
+                        ]
 
 gameResultKindWin  :: Int16
 gameResultKindLose :: Int16
@@ -109,10 +127,19 @@ toGameResultKindString 1 = Just "LOSE"
 toGameResultKindString 2 = Just "DRAW"
 toGameResultKindString _ = Nothing
 
+toGameResultKind :: String -> Int16
+toGameResultKind "WIN"  = 0
+toGameResultKind "LOSE" = 1
+toGameResultKind "DRAW" = 2
+
 attackTurnKindTop    :: Int16
 attackTurnKindBottom :: Int16
 attackTurnKindTop     = 0
 attackTurnKindBottom  = 1
+
+toAttackTurnKind :: String -> Int16
+toAttackTurnKind "TOP" = 0
+toAttackTurnKind "BOTTOM" = 1
 
 toAttackTurnString :: Int16 -> Maybe String
 toAttackTurnString 0 = Just "TOP"

@@ -44,3 +44,9 @@ instance FromJSON PlayerP where
 
 tableName :: String
 tableName = "mst_player"
+
+insertColumnNames :: [String]
+insertColumnNames = [ "player_name"
+                    , "uniform_number"
+                    , "temp_uniform_number"
+                    ]

@@ -5,16 +5,18 @@ module Handler.Player
     , getByNumber
     , getPlayerNameMap
     , put
+    , copyFromCSV
     ) where
 
 import qualified Data.Map as Map
 import           Data.Maybe (fromJust, isJust)
 import           Database.HDBC.Record (runInsertQuery)
-import           Database.HDBC.Types (IConnection)
+import           Database.HDBC.Types (IConnection, runRaw)
 import           Database.Relational.Query hiding (isJust)
 import           GHC.Int (Int32)
+import           System.Directory (makeAbsolute)
 
-import           Handler.Util (fetch, fetchAll')
+import           Handler.Util
 import           Model.Player
 import           Query.Player
 
@@ -36,12 +38,31 @@ getPlayerNameMap conn = getAll conn >>= return . Map.fromList . toTuples
       toTuples [] = []
       toTuples (p:ps)
           | isJust $ uniformNumber p =
-              (fromJust $ uniformNumber p, playerName p)
-              : toTuples ps
+              (fromJust $ uniformNumber p, playerName p): toTuples ps
           | isJust $ tempUniformNumber p =
-              (fromJust $ uniformNumber p, playerName p)
-              : toTuples ps
+              (fromJust $ uniformNumber p, playerName p): toTuples ps
           | otherwise = toTuples ps
 
 put :: IConnection conn => conn -> PlayerP -> IO Integer
 put conn p = runInsertQuery conn (persist p) ()
+
+copyFromCSV :: IConnection conn => conn -> FilePath -> IO ()
+copyFromCSV conn path = do
+  absPath <- makeAbsolute path
+  runRaw conn $ copySql tableName insertColumnNames absPath
+
+-- putAllFromCSV :: IConnection conn => conn -> FilePath -> IO Integer
+-- putAllFromCSV conn path = do
+--   players <- readCSV path
+--   runInsertQuery conn (persistAll players) ()
+
+-- readCSV :: FilePath -> IO (Maybe [PlayerP])
+-- readCSV path = runMaybeT $ do
+--   csv     <- MaybeT $ either2maybe <$> parseCSVFromFile path
+--   players <- MaybeT . return $ mapM record2playerP csv
+--   return players
+
+-- record2playerP :: Record -> Maybe PlayerP
+-- record2playerP [name, num, tempNum] =
+--   Just $ PlayerP name (maybeList num) (maybeList tempNum)
+-- record2playerP _ = Nothing

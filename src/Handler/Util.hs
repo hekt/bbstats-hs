@@ -2,13 +2,15 @@
 
 module Handler.Util where
 
-import           DataSource (schemaName)
+import           Data.List (intercalate)
 import qualified Database.HDBC.Record.Query as Q
 import           Database.HDBC.Record.Statement (bind, execute)
 import           Database.HDBC.Types (IConnection)
 import           Database.HDBC.SqlValue (SqlValue)
 import           Database.Record.FromSql (FromSql)
 import           Database.Relational.Query
+
+import           DataSource (schemaName)
 
 fetch :: (IConnection conn, FromSql SqlValue a) =>
          conn -> Relation () a -> IO (Maybe a)
@@ -23,3 +25,18 @@ fetchAll' conn q = Q.prepare conn (relationalQuery q)
 refleshSql :: String -> String
 refleshSql tableName = concat [ "REFRESH MATERIALIZED VIEW "
                               , schemaName, ".", tableName, ";" ]
+
+copySql :: String -> [String] -> FilePath -> String
+copySql table columns absPath =
+  let to = concat [ table, "(", intercalate "," columns, ")"]
+      from = '\'': absPath ++ "'"
+  in unwords [ "COPY", to, "FROM", from
+             , "(DELIMITER ',', FORMAT csv, HEADER true);" ]
+
+either2maybe :: Either a b -> Maybe b
+either2maybe (Left  _) = Nothing
+either2maybe (Right x) = Just x
+
+maybeList :: [a] -> Maybe [a]
+maybeList [] = Nothing
+maybeList xs = Just xs

@@ -3,6 +3,7 @@
 module Model.BattingResult where
 
 import           Data.Aeson
+import qualified Data.Csv as Csv
 import           Database.HDBC.Query.TH
 import           Database.HDBC.Schema.PostgreSQL (driverPostgreSQL)
 import           Database.Record.TH (derivingShow)
@@ -61,8 +62,30 @@ instance FromJSON BattingResultP where
                          <*> v .: "stolen_bases"
                          <*> v .: "errors"
 
+instance Csv.FromNamedRecord BattingResultP where
+  parseNamedRecord m = BattingResultP
+                       <$> m Csv..: "game_id"
+                       <*> m Csv..: "player_id"
+                       <*> m Csv..: "batting_order"
+                       <*> m Csv..: "appearance_order"
+                       <*> m Csv..: "positions"
+                       <*> m Csv..: "runs"
+                       <*> m Csv..: "stolen_bases"
+                       <*> m Csv..: "errors"
+  
 tableName :: String
 tableName = "tbl_batting_result"
+
+insertColumnNames :: [String]
+insertColumnNames = [ "game_id"
+                    , "player_id"
+                    , "batting_order"
+                    , "appearance_order"
+                    , "positions"
+                    , "runs"
+                    , "stolen_bases"
+                    , "errors"
+                    ]
 
 toPositionsList :: String -> Maybe [Int]
 toPositionsList = readMaybe

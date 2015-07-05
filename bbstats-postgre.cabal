@@ -21,24 +21,27 @@ executable bbstats-postgre
   other-extensions:    TemplateHaskell
                      , MultiParamTypeClasses
                      , FlexibleInstances
-  build-depends:       base >=4.8 && <4.9
-                     , relational-query >=0.5 && <0.6
-                     , HDBC-session >=0.1 && <0.2
-                     , relational-query-HDBC >=0.1 && <0.2
-                     , persistable-record >=0.1 && <0.2
+  build-depends:       base
+                     , aeson
+                     , bytestring
+                     , cassava
+                     , containers
+                     -- , csv
+                     , directory
                      , HDBC
                      , HDBC-postgresql
-                     , time
-                     , containers
-                     , aeson
-                     , split
-                     , bytestring
-                     , transformers
-                     , mtl
-                     , scotty
+                     , HDBC-session
                      , http-types
-                     , process
+                     , mtl
+                     , persistable-record
+                     -- , process
+                     , relational-query
+                     , relational-query-HDBC
+                     , scotty
+                     , split
                      , text
+                     , time
+                     , transformers
                      , unordered-containers
                      , vector
                      -- dev
