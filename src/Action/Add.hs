@@ -31,10 +31,11 @@ addScoreFromCsvs date num paths = withConnectionIO' connect $ \conn -> do
 
   GameScore.copyFromCSV conn gamePath
   result <- runExceptT $ do
-    gameId <- ExceptT $ maybe (Left "game not found") Right
+    gameId <- ExceptT $
+              maybe (Left "failred to insert the game score") Right
               <$> GameScore.getGameIdByDateAndNumber conn date num
-    result <- ExceptT $ BattingResult.putAllFromCSVWithGameId
-              conn battingPath gameId
+    result <- ExceptT $
+              BattingResult.putAllFromCSVWithGameId conn battingPath gameId
     liftIO $ commit conn
     return result
   case result of
