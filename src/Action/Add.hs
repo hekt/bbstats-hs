@@ -30,11 +30,12 @@ addPlayer p = withConnectionIO' connect $ \conn -> do
   commit conn
 
 addScore :: FilePath -> IO (Maybe ())
-addScore path = runMaybeT $ do
-  (day, num) <- MaybeT $ getDateAndNumberFromFilePath path
-  let scorePath = path </> DS.gameScoreCsvFileName
-      battingPath = path </> DS.battingResultCsvFileName
-  liftIO $ addScoreFromCSVs day num [scorePath, battingPath]
+addScore path = addScoreFromCSVs day num $
+                [ path </> DS.gameScoreCsvFileName
+                , path </> DS.battingResultCsvFileName
+                , path </> DS.pitchingResultCsvFileName
+                , path </> DS.atBatCsvFileName
+                ]
 
 addPlayersFromCSV :: FilePath -> IO ()
 addPlayersFromCSV path = withConnectionIO' connect $ \conn -> do
@@ -43,15 +44,15 @@ addPlayersFromCSV path = withConnectionIO' connect $ \conn -> do
 
 addScoreFromCSVs :: Day -> Int16 -> [FilePath] -> IO ()
 addScoreFromCSVs date num paths = withConnectionIO' connect $ \conn -> do
-  let [gamePath, battingPath] = paths
-  GameScore.copyFromCSV conn gamePath
+  let [gamePath, battingPath, pitchingPath, atBatPath] = paths
   result <- runExceptT $ do
-    gameId <- ExceptT $
-              maybe (Left "failred to insert the game score") Right
-              <$> GameScore.getGameIdByDateAndNumber conn date num
-    result <- ExceptT $
-              BattingResult.putAllFromCSVWithGameId conn battingPath gameId
-    return result
+    gameId   <- ExceptT $ GameScore.putFromCSVAndGetId conn gamePath
+    batting  <- ExceptT $ BattingResult.putAllFromCSVWithGameId
+                conn battingPath gameId
+    pitching <- ExceptT $ PitchingResult.putAllFromCSVWithGameId
+                conn pitchingPath gameId
+    atbat    <- ExceptT $ AtBat.putAllFromCSVWithGameId conn atBatPath gameId
+    return $ sum [1, batting, pitching, atbat]
   case result of
     Left msg -> rollback conn >> putStrLn msg
-    Right n  -> commit conn >> print (n + 1)
+    Right n  -> commit conn >> print n

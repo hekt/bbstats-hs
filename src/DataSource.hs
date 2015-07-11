@@ -16,3 +16,9 @@ gameScoreCsvFileName = "score.csv"
 
 battingResultCsvFileName :: String
 battingResultCsvFileName = "batting.csv"
+
+pitchingResultCsvFileName :: String
+pitchingResultCsvFileName = "pitching.csv"
+
+atBatCsvFileName :: String
+atBatCsvFileName = "atbat.csv"

@@ -50,19 +50,3 @@ copyFromCSV :: IConnection conn => conn -> FilePath -> IO ()
 copyFromCSV conn path = do
   absPath <- makeAbsolute path
   runRaw conn $ copySql tableName insertColumnNames absPath
-
--- putAllFromCSV :: IConnection conn => conn -> FilePath -> IO Integer
--- putAllFromCSV conn path = do
---   players <- readCSV path
---   runInsertQuery conn (persistAll players) ()
-
--- readCSV :: FilePath -> IO (Maybe [PlayerP])
--- readCSV path = runMaybeT $ do
---   csv     <- MaybeT $ either2maybe <$> parseCSVFromFile path
---   players <- MaybeT . return $ mapM record2playerP csv
---   return players
-
--- record2playerP :: Record -> Maybe PlayerP
--- record2playerP [name, num, tempNum] =
---   Just $ PlayerP name (maybeList num) (maybeList tempNum)
--- record2playerP _ = Nothing

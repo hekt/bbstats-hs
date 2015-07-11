@@ -27,17 +27,6 @@ findListByPlayerId pid = relation $ do
 
 -- insert
 
-piBattingResultP :: Pi BattingResult BattingResultP
-piBattingResultP = BattingResultP
-                   |$| gameId'
-                   |*| playerId'
-                   |*| battingOrder'
-                   |*| appearanceOrder'
-                   |*| positions'
-                   |*| runs'
-                   |*| stolenBases'
-                   |*| errors'
-
 persist :: BattingResultP -> InsertQuery ()
 persist b = typedInsertQuery tableOfTblBattingResult piBattingResultP $
             relation . return $ BattingResultP

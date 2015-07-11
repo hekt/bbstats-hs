@@ -3,9 +3,11 @@
 module Model.PitchingResult where
 
 import           Data.Aeson
+import qualified Data.Csv as Csv
 import           Database.HDBC.Query.TH
 import           Database.HDBC.Schema.PostgreSQL (driverPostgreSQL)
 import           Database.Record.TH (derivingShow)
+import           Database.Relational.Query
 import           GHC.Int (Int16, Int32)
 
 import           DataSource (connect)
@@ -82,7 +84,39 @@ instance FromJSON PitchingResultP where
                          <*> v .: "hits"
                          <*> v .: "home_runs"
                          <*> v .: "errors"
-                         <*> enumParser toPitchingDecision v "decision"
+                         <*> (toPitchingDecision <$> v .: "decision")
+
+instance Csv.FromNamedRecord PitchingResultP where
+  parseNamedRecord m = PitchingResultP
+                       <$> m Csv..: "game_id"
+                       <*> m Csv..: "player_id"
+                       <*> m Csv..: "appearance_order"
+                       <*> m Csv..: "outs"
+                       <*> m Csv..: "batters_faced"
+                       <*> m Csv..: "runs"
+                       <*> m Csv..: "earned_runs"
+                       <*> m Csv..: "strike_outs"
+                       <*> m Csv..: "walks"
+                       <*> m Csv..: "hits"
+                       <*> m Csv..: "home_runs"
+                       <*> m Csv..: "errors"
+                       <*> m Csv..: "decision"
+
+piPitchingResultP :: Pi PitchingResult PitchingResultP
+piPitchingResultP = PitchingResultP
+                    |$| gameId'
+                    |*| playerId'
+                    |*| appearanceOrder'
+                    |*| outs'
+                    |*| battersFaced'
+                    |*| runs'
+                    |*| earnedRuns'
+                    |*| strikeOuts'
+                    |*| walks'
+                    |*| hits'
+                    |*| homeRuns'
+                    |*| errors'
+                    |*| decision'
 
 tableName :: String
 tableName = "tbl_pitching_result"

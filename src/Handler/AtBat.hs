@@ -2,14 +2,17 @@ module Handler.AtBat
     ( getListByGameId
     , getListByPlayerId
     , getListWithDateByPlayerId
+    , put
+    , putAllFromCSVWithGameId
     ) where
 
 import           Data.Time.Calendar (Day)
+import           Database.HDBC.Record (runInsertQuery)
 import           Database.HDBC.Types (IConnection)
 import           Database.Relational.Query
 import           GHC.Int (Int32)
 
-import           Handler.Util (fetch, fetchAll')
+import           Handler.Util
 import           Model.AtBat
 import           Query.AtBat
 import qualified Model.GameScore as GameScore
@@ -29,3 +32,14 @@ getListWithDateByPlayerId conn = fetchAll' conn . q
                     g <- query GameScore.tblGameScore
                     on $ a ! gameId' .=. g ! GameScore.id'
                     return $ a >< (g ! GameScore.gameDate')
+
+
+put :: IConnection conn => conn -> AtBatP -> IO Integer
+put conn b = runInsertQuery conn (persist b) ()
+
+putAllFromCSVWithGameId :: IConnection conn
+                        => conn -> FilePath -> Int32
+                        -> IO (Either String Integer)
+putAllFromCSVWithGameId conn path gid =
+  putAllFromCSVWithPutAction path $ \ab -> do
+    put conn ab {pGameId = gid}

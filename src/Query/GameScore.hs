@@ -36,23 +36,6 @@ findByDateAndNumber day num = relation $ do
 
 -- insert
 
-piGameScoreP :: Pi GameScore GameScoreP
-piGameScoreP = GameScoreP
-               |$| gameDate'
-               |*| gameNumber'
-               |*| gameResult'
-               |*| ground'
-               |*| attackTurn'
-               |*| runs'
-               |*| totalRuns'
-               |*| totalHits'
-               |*| totalErrors'
-               |*| opponentName'
-               |*| opponentRuns'
-               |*| opponentTotalRuns'
-               |*| opponentTotalHits'
-               |*| opponentTotalErrors'
-
 persist :: GameScoreP -> InsertQuery ()
 persist g = typedInsertQuery tableOfTblGameScore piGameScoreP $
             relation . return $ GameScoreP

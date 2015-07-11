@@ -1,13 +1,18 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Model.Util where
 
 import           Data.Aeson
 import           Data.Aeson.Types (Parser)
+import qualified Data.ByteString.Char8 as BS
+import qualified Data.Csv as Csv
 import           Data.HashMap.Strict ((!))
 import qualified Data.Text as T (Text, pack, unpack)
 import           Data.Time.Calendar (Day, showGregorian)
 import           Data.Time.Format
 import qualified Data.Vector as V
 import           GHC.Int (Int16)
+import           Text.Read (readMaybe)
 
 instance ToJSON Day where
   toJSON = String . T.pack . showGregorian
@@ -18,18 +23,14 @@ instance FromJSON Day where
       Just d -> pure d
       _      -> fail "could not parse ISO-8601 date"
 
-asString :: Object -> T.Text -> Parser String
-asString obj key = withArray "array" f $ obj ! key
-  where f = pure . show . map conv . V.toList
-        conv (Number n) = floor n
+instance Csv.FromField Day where
+  parseField m = case parseTimeM True defaultTimeLocale "%F" (BS.unpack m) of
+    Just d -> pure d
+    _      -> fail "could not parse ISO-8601 date"
 
-asMaybeString :: Object -> T.Text -> Parser (Maybe String)
-asMaybeString obj key = let v = obj ! key in case v of
-  Null -> pure Nothing
-  _    -> withArray "array" f v
-    where f = pure . Just . show . map conv . V.toList
-          conv (Number n) = floor n
+instance Csv.FromField Bool where
+  parseField = pure . str2bool . BS.unpack
 
-enumParser :: (String -> Int16) -> Object -> T.Text -> Parser Int16
-enumParser conv obj key = withText "enum" f $ obj ! key
-  where f = pure . conv . T.unpack
+str2bool :: String -> Bool
+str2bool = let falsey = ["0", "f", "false", "False", "FALSE"]
+           in not . flip elem falsey

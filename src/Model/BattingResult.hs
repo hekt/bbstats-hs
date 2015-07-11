@@ -7,6 +7,7 @@ import qualified Data.Csv as Csv
 import           Database.HDBC.Query.TH
 import           Database.HDBC.Schema.PostgreSQL (driverPostgreSQL)
 import           Database.Record.TH (derivingShow)
+import           Database.Relational.Query
 import           Text.Read (readMaybe)
 import           GHC.Int (Int16, Int32)
 
@@ -57,7 +58,7 @@ instance FromJSON BattingResultP where
                          <*> v .: "player_id"
                          <*> v .: "batting_order"
                          <*> v .: "appearance_order"
-                         <*> asString v "positions"
+                         <*> (show <$> v .: "positions")
                          <*> v .: "runs"
                          <*> v .: "stolen_bases"
                          <*> v .: "errors"
@@ -72,6 +73,17 @@ instance Csv.FromNamedRecord BattingResultP where
                        <*> m Csv..: "runs"
                        <*> m Csv..: "stolen_bases"
                        <*> m Csv..: "errors"
+
+piBattingResultP :: Pi BattingResult BattingResultP
+piBattingResultP = BattingResultP
+                   |$| gameId'
+                   |*| playerId'
+                   |*| battingOrder'
+                   |*| appearanceOrder'
+                   |*| positions'
+                   |*| runs'
+                   |*| stolenBases'
+                   |*| errors'
   
 tableName :: String
 tableName = "tbl_batting_result"

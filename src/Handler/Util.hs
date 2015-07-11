@@ -2,7 +2,12 @@
 
 module Handler.Util where
 
+import           Control.Monad.Trans (liftIO)
+import           Control.Monad.Trans.Except
+import qualified Data.ByteString.Lazy as BS
+import           Data.Csv (FromNamedRecord, decodeByName)
 import           Data.List (intercalate)
+import qualified Data.Vector as V
 import qualified Database.HDBC.Record.Query as Q
 import           Database.HDBC.Record.Statement (bind, execute)
 import           Database.HDBC.Types (IConnection)
@@ -22,6 +27,14 @@ fetchAll' :: (IConnection conn, FromSql SqlValue a) =>
 fetchAll' conn q = Q.prepare conn (relationalQuery q)
                   >>= execute . flip bind () >>= Q.fetchAll'
 
+putAllFromCSVWithPutAction :: FromNamedRecord r => FilePath
+                           -> (r -> IO Integer) -> IO (Either String Integer)
+putAllFromCSVWithPutAction path putAction = runExceptT $ do
+  csvBs        <- liftIO $ BS.readFile path
+  (_, records) <- ExceptT . return $ decodeByName csvBs
+  affecteds    <- liftIO $ V.forM records $ putAction
+  return $ V.sum affecteds
+
 refleshSql :: String -> String
 refleshSql tableName = concat [ "REFRESH MATERIALIZED VIEW "
                               , schemaName, ".", tableName, ";" ]
@@ -32,11 +45,3 @@ copySql table columns absPath =
       from = '\'': absPath ++ "'"
   in unwords [ "COPY", to, "FROM", from
              , "(DELIMITER ',', FORMAT csv, HEADER true);" ]
-
-either2maybe :: Either a b -> Maybe b
-either2maybe (Left  _) = Nothing
-either2maybe (Right x) = Just x
-
-maybeList :: [a] -> Maybe [a]
-maybeList [] = Nothing
-maybeList xs = Just xs

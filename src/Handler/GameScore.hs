@@ -5,9 +5,15 @@ module Handler.GameScore
     , put
     , copyFromCSV
     , getGameIdByDateAndNumber
+    , putFromCSVAndGetId
     ) where
 
+import           Control.Monad.Trans (liftIO)
+import           Control.Monad.Trans.Except
+import qualified Data.ByteString.Lazy as BS
+import           Data.Csv (decodeByName)
 import           Data.Time.Calendar (Day)
+import qualified Data.Vector as V
 import           Database.HDBC.Record (runInsertQuery)
 import           Database.HDBC.Types (IConnection, runRaw)
 import           Database.Relational.Query hiding (id')
@@ -42,3 +48,18 @@ copyFromCSV :: IConnection conn => conn -> FilePath -> IO ()
 copyFromCSV conn path = do
   absPath <- makeAbsolute path
   runRaw conn $ copySql tableName insertColumnNames absPath
+
+{-
+ - CSV から gameDate と gameNumber を取得しなければならないため
+ - Util の関数を使わない
+ -}
+putFromCSVAndGetId :: IConnection conn => conn
+                   -> FilePath -> IO (Either String Int32)
+putFromCSVAndGetId conn path = runExceptT $ do
+  csvBs    <- liftIO $ BS.readFile path
+  g        <- ExceptT . return $ V.head . snd <$> decodeByName csvBs
+  let date = pGameDate g
+      num  = pGameNumber g
+  liftIO $ put conn g
+  maybeId  <- liftIO $ getGameIdByDateAndNumber conn date num
+  ExceptT . return $ maybe (Left "failed to get inserted record") Right maybeId

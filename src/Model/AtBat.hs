@@ -3,12 +3,15 @@
 module Model.AtBat where
 
 import           Data.Aeson
+import qualified Data.Csv as Csv
 import           Database.HDBC.Query.TH
 import           Database.HDBC.Schema.PostgreSQL (driverPostgreSQL)
 import           Database.Record.TH (derivingShow)
+import           Database.Relational.Query
 import           GHC.Int (Int16, Int32)
 
 import           DataSource (connect)
+import           Model.Util
 
 data AtBatP = AtBatP
               { pGameId        :: Int32
@@ -70,6 +73,32 @@ instance FromJSON AtBatP where
                          <*> v .: "result_kind"
                          <*> v .: "is_risp"
                          <*> v .: "is_counts_at_bat"
+
+instance Csv.FromNamedRecord AtBatP where
+  parseNamedRecord m = AtBatP
+                       <$> m Csv..: "game_id"
+                       <*> m Csv..: "player_id"
+                       <*> m Csv..: "at_bat_number"
+                       <*> m Csv..: "inning"
+                       <*> m Csv..: "rbi"
+                       <*> m Csv..: "out_count"
+                       <*> m Csv..: "result_text"
+                       <*> m Csv..: "result_kind"
+                       <*> m Csv..: "is_risp"
+                       <*> m Csv..: "is_counts_at_bat"
+
+piAtBatP :: Pi AtBat AtBatP
+piAtBatP = AtBatP
+                   |$| gameId'
+                   |*| playerId'
+                   |*| atBatNumber'
+                   |*| inning'
+                   |*| rbi'
+                   |*| outCount'
+                   |*| resultText'
+                   |*| resultKind'
+                   |*| isRisp'
+                   |*| isCountsAtBat'
 
 tableName :: String
 tableName = "tbl_at_bat"

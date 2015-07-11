@@ -5,11 +5,13 @@ module Model.GameScore where
 import           Control.Monad
 import           Data.Aeson
 import           Data.Aeson.Types (Parser)
+import qualified Data.Csv as Csv
 import qualified Data.Text as T (Text)
 import           Data.Time.Calendar (Day)
 import           Database.HDBC.Query.TH
 import           Database.HDBC.Schema.PostgreSQL (driverPostgreSQL)
 import           Database.Record.TH (derivingShow)
+import           Database.Relational.Query
 import           GHC.Int (Int16)
 import           Text.Read (readMaybe)
 
@@ -80,19 +82,53 @@ instance FromJSON GameScoreP where
   parseJSON (Object v) = GameScoreP
                          <$> v .: "game_date"
                          <*> v .: "game_number"
-                         <*> enumParser toGameResultKind v "game_result"
+                         <*> (toGameResultKind <$> v .: "game_result")
                          <*> v .: "ground"
-                         <*> enumParser toAttackTurnKind v "attack_turn"
-                         <*> asString v "runs"
+                         <*> (toAttackTurnKind <$> v .: "attack_turn")
+                         <*> (show <$> v .: "runs")
                          <*> v .: "total_runs"
                          <*> v .: "total_hits"
                          <*> v .: "total_errors"
                          <*> v .: "opponent_name"
-                         <*> asMaybeString v "opponent_runs"
+                         <*> ((show <$>) <$> v .: "opponent_runs")
                          <*> v .: "opponent_total_runs"
                          <*> v .: "opponent_total_hits"
                          <*> v .: "opponent_total_errors"
   parseJSON _          = mzero
+
+instance Csv.FromNamedRecord GameScoreP where
+  parseNamedRecord m = GameScoreP
+                       <$> m Csv..: "game_date"
+                       <*> m Csv..: "game_number"
+                       <*> m Csv..: "game_result"
+                       <*> m Csv..: "ground"
+                       <*> m Csv..: "attack_turn"
+                       <*> m Csv..: "runs"
+                       <*> m Csv..: "total_runs"
+                       <*> m Csv..: "total_hits"
+                       <*> m Csv..: "total_errors"
+                       <*> m Csv..: "opponent_name"
+                       <*> m Csv..: "opponent_runs"
+                       <*> m Csv..: "opponent_total_runs"
+                       <*> m Csv..: "opponent_total_hits"
+                       <*> m Csv..: "opponent_total_errors"
+
+piGameScoreP :: Pi GameScore GameScoreP
+piGameScoreP = GameScoreP
+               |$| gameDate'
+               |*| gameNumber'
+               |*| gameResult'
+               |*| ground'
+               |*| attackTurn'
+               |*| runs'
+               |*| totalRuns'
+               |*| totalHits'
+               |*| totalErrors'
+               |*| opponentName'
+               |*| opponentRuns'
+               |*| opponentTotalRuns'
+               |*| opponentTotalHits'
+               |*| opponentTotalErrors'
 
 tableName :: String
 tableName = "tbl_game_score"

@@ -25,7 +25,7 @@ json' val = do
 getDateAndNumberFromFilePath :: FilePath -> IO (Maybe (Day, Int16))
 getDateAndNumberFromFilePath path = do
   dirName <- takeBaseName <$> canonicalizePath path
-  let reStr   = "([0-9]{4}-[0-9]{2}-[0-9]{2})_([0-9]+)" :: String
+  let reStr = "([0-9]{4}-[0-9]{2}-[0-9]{2})_([0-9]+)" :: String
   case dirName =~~ reStr of
     Just [[_, day, num]] -> return $ Just (read day, read num)
     _                    -> return Nothing

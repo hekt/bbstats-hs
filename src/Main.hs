@@ -16,7 +16,7 @@ main = do
   case commandName of
     "server"    -> server
     "reflesh"   -> reflesh
-    "add-score" -> void $ addScore (head args)
+    "add-score" -> addScore (head args)
     _           -> help
 
 help :: IO ()
