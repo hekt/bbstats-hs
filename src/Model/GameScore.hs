@@ -85,12 +85,12 @@ instance FromJSON GameScoreP where
                          <*> (toGameResultKind <$> v .: "game_result")
                          <*> v .: "ground"
                          <*> (toAttackTurnKind <$> v .: "attack_turn")
-                         <*> (show <$> v .: "runs")
+                         <*> (show <$> (v .: "runs" :: Parser [Int]))
                          <*> v .: "total_runs"
                          <*> v .: "total_hits"
                          <*> v .: "total_errors"
                          <*> v .: "opponent_name"
-                         <*> ((show <$>) <$> v .: "opponent_runs")
+                         <*> ((show <$>) <$> (v .: "opponent_runs" :: Parser (Maybe [Int])))
                          <*> v .: "opponent_total_runs"
                          <*> v .: "opponent_total_hits"
                          <*> v .: "opponent_total_errors"

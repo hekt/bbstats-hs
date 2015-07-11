@@ -29,8 +29,8 @@ addPlayer p = withConnectionIO' connect $ \conn -> do
   result <- Player.put conn p
   commit conn
 
-addScore :: FilePath -> IO (Maybe ())
-addScore path = addScoreFromCSVs day num $
+addScore :: FilePath -> IO ()
+addScore path = addScoreFromCSVs $
                 [ path </> DS.gameScoreCsvFileName
                 , path </> DS.battingResultCsvFileName
                 , path </> DS.pitchingResultCsvFileName
@@ -42,8 +42,8 @@ addPlayersFromCSV path = withConnectionIO' connect $ \conn -> do
   Player.copyFromCSV conn path
   commit conn
 
-addScoreFromCSVs :: Day -> Int16 -> [FilePath] -> IO ()
-addScoreFromCSVs date num paths = withConnectionIO' connect $ \conn -> do
+addScoreFromCSVs :: [FilePath] -> IO ()
+addScoreFromCSVs paths = withConnectionIO' connect $ \conn -> do
   let [gamePath, battingPath, pitchingPath, atBatPath] = paths
   result <- runExceptT $ do
     gameId   <- ExceptT $ GameScore.putFromCSVAndGetId conn gamePath

@@ -3,6 +3,7 @@
 module Model.BattingResult where
 
 import           Data.Aeson
+import           Data.Aeson.Types (Parser)
 import qualified Data.Csv as Csv
 import           Database.HDBC.Query.TH
 import           Database.HDBC.Schema.PostgreSQL (driverPostgreSQL)
@@ -58,7 +59,7 @@ instance FromJSON BattingResultP where
                          <*> v .: "player_id"
                          <*> v .: "batting_order"
                          <*> v .: "appearance_order"
-                         <*> (show <$> v .: "positions")
+                         <*> (show <$> (v .: "positions" :: Parser [Int]))
                          <*> v .: "runs"
                          <*> v .: "stolen_bases"
                          <*> v .: "errors"
