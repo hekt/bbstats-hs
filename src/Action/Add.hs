@@ -24,6 +24,8 @@ import qualified Handler.GameScore as GameScore
 import qualified Handler.PitchingResult as PitchingResult
 import qualified Handler.PitchingStats as PitchingStats
 
+type AllPath = (FilePath, FilePath, FilePath, FilePath)
+
 addPlayer :: Player.PlayerP -> IO ()
 addPlayer p = withConnectionIO' connect $ \conn -> do
   result <- Player.put conn p
@@ -31,20 +33,20 @@ addPlayer p = withConnectionIO' connect $ \conn -> do
 
 addScore :: FilePath -> IO ()
 addScore path = addScoreFromCSVs $
-                [ path </> DS.gameScoreCsvFileName
+                ( path </> DS.gameScoreCsvFileName
                 , path </> DS.battingResultCsvFileName
                 , path </> DS.pitchingResultCsvFileName
                 , path </> DS.atBatCsvFileName
-                ]
+                )
 
 addPlayersFromCSV :: FilePath -> IO ()
 addPlayersFromCSV path = withConnectionIO' connect $ \conn -> do
   Player.copyFromCSV conn path
   commit conn
 
-addScoreFromCSVs :: [FilePath] -> IO ()
+addScoreFromCSVs :: AllPath -> IO ()
 addScoreFromCSVs paths = withConnectionIO' connect $ \conn -> do
-  let [gamePath, battingPath, pitchingPath, atBatPath] = paths
+  let (gamePath, battingPath, pitchingPath, atBatPath) = paths
   result <- runExceptT $ do
     gameId   <- ExceptT $ GameScore.putFromCSVAndGetId conn gamePath
     batting  <- ExceptT $ BattingResult.putAllFromCSVWithGameId

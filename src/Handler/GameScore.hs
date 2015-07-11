@@ -58,8 +58,10 @@ putFromCSVAndGetId :: IConnection conn => conn
 putFromCSVAndGetId conn path = runExceptT $ do
   csvBs    <- liftIO $ BS.readFile path
   g        <- ExceptT . return $ V.head . snd <$> decodeByName csvBs
+  liftIO $ put conn g
   let date = pGameDate g
       num  = pGameNumber g
-  liftIO $ put conn g
   maybeId  <- liftIO $ getGameIdByDateAndNumber conn date num
-  ExceptT . return $ maybe (Left "failed to get inserted record") Right maybeId
+  case maybeId of
+    Just n -> return n
+    _      -> throwE "failed to get inserted record"
