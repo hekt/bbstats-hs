@@ -26,7 +26,6 @@ executable bbstats-postgre
                      , bytestring
                      , cassava
                      , containers
-                     -- , csv
                      , directory
                      , filepath
                      , HDBC
@@ -35,7 +34,6 @@ executable bbstats-postgre
                      , http-types
                      , mtl
                      , persistable-record
-                     -- , process
                      , regex-posix
                      , relational-query
                      , relational-query-HDBC
@@ -46,7 +44,5 @@ executable bbstats-postgre
                      , transformers
                      , unordered-containers
                      , vector
-                     -- dev
-                     , aeson-pretty
   hs-source-dirs:      src
   default-language:    Haskell2010
